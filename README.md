@@ -1,2 +1,2 @@
 # playwright
-Playwright with pytest and with CI/CD for masters 
+Playwright with pytest and with CI/CD for masters only
