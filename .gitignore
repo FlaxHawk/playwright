@@ -175,8 +175,8 @@ cython_debug/
 
 # Virtual Environment
 venv/
-ENV/
 env/
+ENV/
 
 # IDE
 .idea/
