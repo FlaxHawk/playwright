@@ -218,4 +218,101 @@ class TestNavigation:
         
         with allure.step("Verify examples list"):
             assert len(examples) > 0
-            assert "Form Authentication" in examples 
+            assert "Form Authentication" in examples
+
+@allure.epic("Herokuapp Test Suite")
+@pytest.mark.keys
+class TestKeyPresses:
+    @allure.title("Test key press detection")
+    def test_key_press_detection(self, herokuapp):
+        """
+        Test Steps:
+        1. Navigate to Key Presses page
+        2. Press different keys
+        3. Verify key press detection
+        """
+        keys_to_test = ["A", "1", "Tab", "Escape"]
+        
+        for key in keys_to_test:
+            with allure.step(f"Press key: {key}"):
+                result = herokuapp.press_key(key)
+                expected = f"You entered: {key.upper()}"
+                assert expected in result, f"Expected '{expected}' but got '{result}'"
+
+@allure.epic("Herokuapp Test Suite")
+@pytest.mark.slider
+class TestHorizontalSlider:
+    @allure.title("Test horizontal slider functionality")
+    def test_slider_movement(self, herokuapp):
+        """
+        Test Steps:
+        1. Navigate to Horizontal Slider page
+        2. Set different slider values
+        3. Verify slider value updates
+        """
+        test_values = [0, 2.5, 5]
+        
+        for value in test_values:
+            with allure.step(f"Set slider value to {value}"):
+                herokuapp.set_slider_value(value)
+                actual_value = herokuapp.get_slider_value()
+                assert actual_value == value, f"Expected {value} but got {actual_value}"
+
+@allure.epic("Herokuapp Test Suite")
+@pytest.mark.tables
+class TestSortableTables:
+    @allure.title("Test table data retrieval")
+    def test_table_data(self, herokuapp):
+        """
+        Test Steps:
+        1. Navigate to Sortable Data Tables page
+        2. Get table data
+        3. Verify data structure
+        """
+        with allure.step("Get table data"):
+            table_data = herokuapp.get_table_data()
+            
+        with allure.step("Verify table structure"):
+            assert len(table_data) > 0, "Table should not be empty"
+            assert all("Last Name" in row for row in table_data), "Each row should have 'Last Name' column"
+
+    @allure.title("Test table sorting")
+    def test_table_sorting(self, herokuapp):
+        """
+        Test Steps:
+        1. Navigate to Sortable Data Tables page
+        2. Get initial table data
+        3. Sort by column
+        4. Verify sorting
+        """
+        with allure.step("Get initial table data"):
+            initial_data = herokuapp.get_table_data()
+
+        with allure.step("Sort table by Last Name"):
+            herokuapp.sort_table_by_column("Last Name")
+            sorted_data = herokuapp.get_table_data()
+
+        with allure.step("Verify sorting"):
+            initial_last_names = [row["Last Name"] for row in initial_data]
+            sorted_last_names = [row["Last Name"] for row in sorted_data]
+            assert sorted_last_names == sorted(initial_last_names), "Table should be sorted by Last Name"
+
+@allure.epic("Herokuapp Test Suite")
+@pytest.mark.status
+class TestStatusCodes:
+    @allure.title("Test status code pages")
+    def test_status_codes(self, herokuapp):
+        """
+        Test Steps:
+        1. Navigate to Status Codes page
+        2. Check each status code
+        3. Verify status code pages
+        """
+        status_codes = [200, 301, 404, 500]
+        
+        for code in status_codes:
+            with allure.step(f"Check status code {code}"):
+                assert herokuapp.check_status_code(code), f"Failed to access {code} status code page"
+                
+                message = herokuapp.verify_status_code_message(code)
+                assert str(code) in message, f"Status code {code} not found in message: {message}" 

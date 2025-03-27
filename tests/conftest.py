@@ -26,8 +26,18 @@ def browser_context_args(browser_context_args: Dict) -> Dict:
     """Fixture to set default browser context arguments."""
     return {
         **browser_context_args,
-        "viewport": {"width": 1920, "height": 1080},
+        "viewport": {
+            "width": 1920,
+            "height": 1080,
+        },
         "record_video_dir": "reports/videos" if os.getenv('VIDEO_ON_FAILURE', 'true').lower() == 'true' else None,
+    }
+
+@pytest.fixture(scope="session")
+def browser_type_launch_args():
+    return {
+        "args": ["--start-maximized"],
+        "headless": False,
     }
 
 @pytest.fixture(scope="session")
@@ -67,9 +77,4 @@ def responsive_page(browser: Browser, request) -> Generator[Page, None, None]:
 @pytest.fixture(scope="session")
 def base_url() -> str:
     """Fixture to get base URL from environment variables."""
-    return BASE_URL
-
-# Custom pytest hooks
-def pytest_html_report_title(report):
-    """Set the title of the HTML report."""
-    report.title = "Playwright Test Automation Report" 
+    return BASE_URL 
